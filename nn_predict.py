@@ -4,15 +4,18 @@ import numpy as np
 def relu(x: np.ndarray) -> np.ndarray:
     return np.maximum(0, x)
 
-def softmax(x: np.ndarray, axis=-1) -> np.ndarray:
+def softmax(x: np.ndarray, axis=None) -> np.ndarray:
     """
-    Numerically-stable softmax。
-    - 不再強制升成 float64，而是 **維持原 dtype**（unit-test 會檢查）
+    Numerically-stable softmax
+    - 預設 axis=None → 自動沿最後一維
     """
-    x = x.astype(np.float32, copy=False)          # 若本來是 float32 就不複製
+    if axis is None:
+        axis = -1
+    x = x.astype(np.float32, copy=False)
     x_shift = x - np.max(x, axis=axis, keepdims=True)
     exp_x   = np.exp(x_shift)
     return exp_x / np.sum(exp_x, axis=axis, keepdims=True)
+
 
 def flatten(x):
     return x.reshape(x.shape[0], -1)
